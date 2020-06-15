@@ -2,9 +2,18 @@ const express = require('express');
 const productsRouter = express.Router();
 const { checkSchema, validationResult } = require('express-validator');
 const { 
-    getProducts
+    getProducts,
+    getProduct,
+    createProduct,
+    updateProduct,
+    deleteProduct
 } = require('../controller/productsController');
-
+const {
+    getProductSchema,
+    postProductSchema,
+    putProductSchema,
+    deleteProductSchema
+} = require('./validators/productsSchemas')
 const checkInputErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (errors && !errors.isEmpty()) {
@@ -16,38 +25,29 @@ const checkInputErrors = (req, res, next) => {
 //GET products
 productsRouter.route('/')
     .get(getProducts)
+    .post(
+        checkSchema(postProductSchema),
+        checkInputErrors,
+        createProduct
+    )
 ;
 
-/*
-contentRouter.route('/pages/:pageId')
+productsRouter.route('/:id')
     .get(
-        checkSchema(getPageComponentsSchema),
+        checkSchema(getProductSchema),
         checkInputErrors,
-        getPageComponents)
-    .post(
-        checkSchema(postPageComponentSchema),
-        checkInputErrors,
-        postPageComponent
+        getProduct
     )
-    .patch(
-        checkSchema(patchPageComponentSchema),
+    .put(
+        checkSchema(putProductSchema),
         checkInputErrors,
-        patchPageComponent
+        updateProduct
     )
-;
-
-contentRouter.route('/pages/:pageId/components/:componentId')
-    .post(
-        checkSchema(postPageComponentItemsSchema),
+    .delete(
+        checkSchema(deleteProductSchema),
         checkInputErrors,
-        postPageComponentItems
-    )
-    .patch(
-        checkSchema(patchPageComponentItemsSchema),
-        checkInputErrors,
-        patchPageComponentItems
+        deleteProduct
     )
 ;
-*/
 
 module.exports = productsRouter;
